@@ -1,60 +1,64 @@
-// vi börjar med variabler
-
-const input = document.querySelector("#inputToDo");
-const addBtn = document.querySelector("button");
+const bin = document.createElement("span");
+const button = document.querySelector("button");
+const input = document.querySelector("input");
+const label = document.querySelector("p");
 const list = document.querySelector("ul");
-const msg = document.querySelector("#message");
-const showCompleted = document.querySelector("p");
+
+let completedCount = 0;
+let listCount = 0;
+
+const listan = [];
 const todoArray = [];
 
-let text; // texten från input
-let message; // texten som ska visas som meddelande
-let completedCount = 0; // antal som är completed
+button.addEventListener("click", function () {
+  const text = input.value;
 
-//här kommer kod för saker som ska hända
-addBtn.addEventListener(
-    "click",
+  if (text.length == 0) {
+    document.querySelector("small").innerText = "You need to write something";
+    document.querySelector("small").setAttribute("class", "empty");
+    return;
+  } else {
+    document.querySelector("small").innerText = "";
+  }
 
-    function(){
-        let text = input.value;
-    if(text.length == 0){
-        msg.innerHTML = "Du måste skriva något!";
-       //Skapa fel meddelande
-        return;
+  const item = document.createElement("li");
+  list.appendChild(item);
+  todoArray.push(text);
+
+  const itemLabel = document.createElement("span");
+  itemLabel.innerText = text;
+  item.appendChild(itemLabel);
+  listCount++;
+  label.innerText = `${completedCount} tasks are completed`;
+
+  const bin = document.createElement("span");
+  bin.innerHTML = "delete";
+  bin.setAttribute("class", "material-symbols-outlined");
+  item.appendChild(bin);
+
+  itemLabel.addEventListener("click", function () {
+    if (item.getAttribute("class") == "completed") {
+      item.setAttribute("class", "");
+      completedCount--;
+    } else {
+      item.setAttribute("class", "completed", "id", "trashcan");
+      completedCount++;
     }
-    msg.innerHTML = "";
 
-    const todoObject = {};
+    label.innerText = `${completedCount} tasks are completed`;
+  });
 
-    todoObject.todo = text;
-    todoObject.status = "not complete";
-
-        todoArray.push(todoObject);
-
-        // skapa html-element för en ny li
-        const item = document.createElement("li");
-        list.appendChild(item);
-
-        const itemLabel = document.createElement("span");
-        itemLabel.innerText = text;
-
-        item.appendChild(itemLabel);
-
-        //lyssnare itemLabel
-        itemLabel.addEventListener(
-            "click",
-
-            function(){
-                item.setAttribute("class", "completed");
-                // Samma sak: itemLabel.classList.add("completed")
-                completedCount++;
-                //Visa meddelande
-                //showCompleted.innerText = `${completedCount} är klara`;
-                 showCompleted.innerText = completedCount + " är klara";
-            }
-
-        )
-
-
+  bin.addEventListener("click", function () {
+    var nummer = todoArray.indexOf(text);
+    delete todoArray[nummer];
+    item.remove();
+    listCount--;
+    if (item.getAttribute("class") == "completed") {
+      completedCount--;
     }
-)
+
+    label.innerText = `${completedCount} tasks are completed`;
+  });
+
+  input.value = "";
+});
